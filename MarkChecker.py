@@ -1,11 +1,13 @@
 import requests
 import re
+from datetime import date
 url = 'https://ta.yrdsb.ca/yrdsb/index.php'
 values = {'username': '',
           'password': ''}
 count = 0
 search_str = "mark "
 courseCode = re.compile("([A-Z][A-Z][A-Z][0-9][A-Z][0-9]-[0-9][0-9])")
+#dateTemp = re.compile("(0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]")
 marks = {}
 newMarks = {}
 course = ""
@@ -20,13 +22,14 @@ with open('responseData', 'r') as d :
 	response = d.read()
 
 #GOING TO HAVE TO CHANGE THIS TO READ LAST ENTRY 
-with open('History', 'r') as m:
-	inp1 = m.readline().rstrip()
+with open('History', 'r') as f:
+	f.seek(-64, 2)
+	inp1 = f.readline().rstrip()
 	while inp1 or inp2:
-		inp2 = m.readline().rstrip()
+		inp2 = f.readline().rstrip()
 		d = {inp1: inp2}
 		marks.update(d)
-		inp1 = m.readline().rstrip()
+		inp1 = f.readline().rstrip()
 if '' in marks :
 	del marks['']
 
@@ -47,14 +50,11 @@ del newMarks['']
 if marks != newMarks :
 	with open('History', 'a') as a:
 		a.write("\n")
+		date = str(date.today())
+		a.write(date)
+		a.write("\n")
 		for k, v in newMarks.iteritems() :
 			a.write(k)
 			a.write("\n")
 			a.write(v)
 			a.write("\n")
-
-#ADD DATE
-#checking for a change
-#saving to file
-#reading from file
-#automatic run
