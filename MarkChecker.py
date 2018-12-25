@@ -1,27 +1,43 @@
 import requests
 import re
 from datetime import date
+from Tkinter import *
 url = 'https://ta.yrdsb.ca/yrdsb/index.php'
 values = {'username': '',
           'password': ''}
 count = 0
 search_str = "mark "
 courseCode = re.compile("([A-Z][A-Z][A-Z][0-9][A-Z][0-9]-[0-9][0-9])")
-#dateTemp = re.compile("(0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]")
 marks = {}
 newMarks = {}
 course = ""
 mark = ""
 inp1 = ""
 inp2 = ""
-#r = requests.post(url, data=values)
-#response = r.content;
+r = requests.post(url, data=values)
+response = r.content;
 
 #get curr input DELETE
-with open('responseData', 'r') as d : 
-	response = d.read()
+#with open('responseData', 'r') as d : 
+#	response = d.read()
+def FindUpdatedCourses():
+	lineCount = 0
+	diff = ""
+	for key in newMarks.keys() : 
+		if marks.get(key) != newMarks.get(key) :
+			diff += key + "\n"
+	return diff
 
-#GOING TO HAVE TO CHANGE THIS TO READ LAST ENTRY 
+def UpdateWindow(): 
+	root = Tk()
+	w = Label(root, text="Your marks have changed!")
+	w.pack()
+	T = Text(root, height=5, width = 40)
+	T.pack()
+	text = 'The following courses have been updated:' + FindUpdatedCourses()
+	T.insert(END, text)
+	root.mainloop()
+
 with open('History', 'r') as f:
 	f.seek(-64, 2)
 	inp1 = f.readline().rstrip()
@@ -58,3 +74,4 @@ if marks != newMarks :
 			a.write("\n")
 			a.write(v)
 			a.write("\n")
+	UpdateWindow()
